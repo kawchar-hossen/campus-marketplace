@@ -1,17 +1,83 @@
-<h2>{{ product.title }}</h2>
+{% extends "base.html" %}
 
-<img src="/static/images/{{ product.image }}" width="250">
+{% block content %}
 
-<p>{{ product.description }}</p>
-<p>Price: {{ product.price }} BDT</p>
-<p>Category: {{ product.category }}</p>
+<div class="product-detail-page">
 
-<a href="/products">Back</a>
+    <div class="product-detail-card">
 
-{% if current_user.is_authenticated and current_user.id == product.seller_id %}
-    <a href="/product/edit/{{ product.id }}">Edit</a>
-    <a href="/product/delete/{{ product.id }}">Delete</a>
-    <a href="/chat/{{ product.seller_id }}">Chat with Seller</a>
-    <a href="/buy/{{ product.id }}">Buy Now</a>
-{% endif %}
+        <!-- 🔹 Product Image -->
+        <div class="product-detail-image">
+            <img 
+                src="{{ url_for('static', filename='images/' ~ (product.image or 'default_product.png')) }}"
+                alt="{{ product.title }}">
+        </div>
 
+        <!-- 🔹 Product Info -->
+        <div class="product-detail-info">
+
+            <span class="product-category">
+                {{ product.category or "General" }}
+            </span>
+
+            <h1>{{ product.title }}</h1>
+
+            <p class="product-price">৳ {{ product.price }}</p>
+
+            <p class="product-description">
+                {{ product.description or "No description available for this product." }}
+            </p>
+
+            <!-- 🔹 Buttons -->
+            <div class="product-buttons">
+
+                <a href="/products" class="btn-back-shop">
+                    ← Back
+                </a>
+
+                {% if current_user.is_authenticated %}
+                
+                    <!-- Wishlist -->
+                    <a href="{{ url_for('wishlist.add_wishlist', product_id=product.id) }}"
+                       class="btn-wishlist">
+                        ❤️ Wishlist
+                    </a>
+
+                    <!-- Chat (NOT seller) -->
+                    {% if current_user.id != product.seller_id %}
+                    <a href="/chat/{{ product.seller_id }}" class="btn-chat">
+                        💬 Chat
+                    </a>
+                    {% endif %}
+
+                {% endif %}
+
+                <!-- Seller Controls -->
+                {% if current_user.is_authenticated and current_user.id == product.seller_id %}
+                
+                    <a href="/product/edit/{{ product.id }}" class="btn-edit">
+                        ✏️ Edit
+                    </a>
+
+                    <a href="/product/delete/{{ product.id }}" class="btn-delete">
+                        🗑 Delete
+                    </a>
+
+                {% endif %}
+
+                <!-- Buy Button (NOT seller) -->
+                {% if current_user.is_authenticated and current_user.id != product.seller_id %}
+                <a href="/buy/{{ product.id }}" class="btn-buy">
+                    🛒 Buy Now
+                </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

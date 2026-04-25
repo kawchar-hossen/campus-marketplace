@@ -1,21 +1,83 @@
-<h1>My Wishlist</h1>
+{% extends "base.html" %}
 
-<a href="/products">Back to Products</a>
+{% block content %}
 
-<hr>
+<div class="wishlist-page">
 
-{% for item in items %}
-<div>
-    <img src="/static/images/{{ item.product.image }}" width="120"><br>
+    <div class="wishlist-header">
+        <h1>My Wishlist</h1>
+        <a href="{{ url_for('product.all_products') }}" class="btn-back">← Back</a>
+    </div>
 
-    <h3>{{ item.product.title }}</h3>
+    {% if items %}
 
-    <p>{{ item.product.price }} BDT</p>
+    <div class="wishlist-grid">
 
-    <a href="/product/{{ item.product.id }}">View</a>
+        {% for item in items %}
+        <div class="wishlist-card">
 
-    <a href="/wishlist/remove/{{ item.id }}">Remove</a>
+            {% if item.product %}
+
+                <img src="{{ url_for('static', filename='images/' + item.product.image) }}" alt="Product">
+
+                <div class="wishlist-info">
+
+                    <h3>{{ item.product.title }}</h3>
+
+                    <p class="price">৳ {{ item.product.price }}</p>
+
+                    <div class="wishlist-buttons">
+
+                        <a href="{{ url_for('product.product_detail', id=item.product.id) }}" class="btn-view">
+                            View
+                        </a>
+
+                        <a href="{{ url_for('wishlist.remove_wishlist', id=item.id) }}" class="btn-remove">
+                            Remove
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="wishlist-info">
+
+                    <h3>Product Not Available</h3>
+
+                    <p class="price">Removed Product</p>
+
+                    <div class="wishlist-buttons">
+
+                        <a href="{{ url_for('wishlist.remove_wishlist', id=item.id) }}" class="btn-remove">
+                            Remove
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+    
+    <div class="empty-wishlist">
+        <h2>No Items Yet</h2>
+        <p>Add products to wishlist.</p>
+
+        <a href="{{ url_for('product.all_products') }}" class="btn-shop">
+            Browse Products
+        </a>
+    </div>
+
+    {% endif %}
+
 </div>
 
-<hr>
-{% endfor %}
+{% endblock %}          

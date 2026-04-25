@@ -1,0 +1,25 @@
+<h1>Sales Dashboard</h1>
+
+<a href="/products">Back to Products</a>
+
+<hr>
+
+{% for sale in sales %}
+<div>
+    <img src="/static/images/{{ sale.product.image }}" width="120"><br>
+
+    <h3>{{ sale.product.title }}</h3>
+
+    <p>Buyer: {{ sale.buyer.full_name }}</p>
+
+    <p>Status: {{ sale.status }}</p>
+
+    {% if sale.status != "Completed" %}
+        <a href="/order/complete/{{ sale.id }}">
+            Mark Completed
+        </a>
+    {% endif %}
+</div>
+
+<hr>
+{% endfor %}

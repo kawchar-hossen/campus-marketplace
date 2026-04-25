@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+</head>
+<body>
+
+<h2>Chat with {{ other_user.full_name }}</h2>
+
+<div id="messages" style="height:300px; overflow:auto; border:1px solid gray; padding:10px;">
+
+{% for msg in messages %}
+<p>
+<b>
+{% if msg.sender_id == current_user.id %}
+You
+{% else %}
+{{ other_user.full_name }}
+{% endif %}
+:</b>
+
+{{ msg.text }}
+</p>
+{% endfor %}
+
+</div>
+
+<br>
+
+<input type="text" id="message_input" placeholder="Type message">
+<button onclick="sendMessage()">Send</button>
+
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+<script>
+const socket = io();
+
+socket.emit("join", {
+    receiver_id: {{ other_user.id }}
+});
+
+socket.on("receive_message", function(data){
+    let box = document.getElementById("messages");
+    box.innerHTML += "<p><b>" + data.sender + ":</b> " + data.text + "</p>";
+});
+
+function sendMessage(){
+    let text = document.getElementById("message_input").value;
+
+    socket.emit("send_message", {
+        receiver_id: {{ other_user.id }},
+        text: text
+    });
+
+    document.getElementById("message_input").value = "";
+}
+</script>
+
+</body>
+</html>

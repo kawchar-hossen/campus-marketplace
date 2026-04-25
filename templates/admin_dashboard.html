@@ -1,0 +1,33 @@
+<h1>Admin Dashboard</h1>
+
+<p>Total Users: {{ total_users }}</p>
+<p>Total Products: {{ total_products }}</p>
+<p>Total Orders: {{ total_orders }}</p>
+
+<hr>
+
+<h2>Users</h2>
+
+{% for user in users %}
+<div>
+    <b>{{ user.full_name }}</b>
+    ({{ user.email }})
+
+    {% if user.is_admin %}
+        [ADMIN]
+    {% endif %}
+
+    {% if user.is_banned %}
+        <a href="/admin/unban/{{ user.id }}">Unban</a>
+    {% else %}
+        <a href="/admin/ban/{{ user.id }}">Ban</a>
+    {% endif %}
+</div>
+<hr>
+{% endfor %}
+
+<h2>Products</h2>
+
+{% for p in current_user.products %}
+<p>{{ p.title }}</p>
+{% endfor %}

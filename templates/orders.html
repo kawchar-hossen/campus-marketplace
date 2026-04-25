@@ -1,0 +1,21 @@
+<h1>My Orders</h1>
+
+<a href="/products">Back to Products</a>
+
+<hr>
+
+{% for order in orders %}
+<div>
+    <img src="/static/images/{{ order.product.image }}" width="120"><br>
+
+    <h3>{{ order.product.title }}</h3>
+
+    <p>Price: {{ order.product.price }} BDT</p>
+
+    <p>Status: {{ order.status }}</p>
+
+    <p>Seller: {{ order.product.seller.full_name }}</p>
+</div>
+
+<hr>
+{% endfor %}

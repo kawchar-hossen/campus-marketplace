@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4">Welcome, {{ user.full_name }}</h2>
+
+<div class="row mt-4">
+
+    <!-- Email Card -->
+    <div class="col-md-4">
+        <div class="card shadow p-3">
+            <h5>Email</h5>
+            <p class="text-muted">{{ user.email }}</p>
+        </div>
+    </div>
+
+    <!-- University Card -->
+    <div class="col-md-4">
+        <div class="card shadow p-3">
+            <h5>University</h5>
+            <p class="text-muted">{{ user.university }}</p>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="col-md-4">
+        <div class="card shadow p-3">
+            <h5>Quick Links</h5>
+
+            <a href="/product/add" class="btn btn-sm btn-success mb-2 w-100">
+                Sell Item
+            </a>
+
+            <a href="/orders" class="btn btn-sm btn-primary mb-2 w-100">
+                My Orders
+            </a>
+
+            <a href="/logout" class="btn btn-sm btn-danger w-100">
+                Logout
+            </a>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

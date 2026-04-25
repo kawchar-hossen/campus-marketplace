@@ -1,0 +1,17 @@
+<h2>{{ product.title }}</h2>
+
+<img src="/static/images/{{ product.image }}" width="250">
+
+<p>{{ product.description }}</p>
+<p>Price: {{ product.price }} BDT</p>
+<p>Category: {{ product.category }}</p>
+
+<a href="/products">Back</a>
+
+{% if current_user.is_authenticated and current_user.id == product.seller_id %}
+    <a href="/product/edit/{{ product.id }}">Edit</a>
+    <a href="/product/delete/{{ product.id }}">Delete</a>
+    <a href="/chat/{{ product.seller_id }}">Chat with Seller</a>
+    <a href="/buy/{{ product.id }}">Buy Now</a>
+{% endif %}
+

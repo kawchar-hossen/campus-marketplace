@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-md-6">
+
+        <div class="card shadow">
+
+            <div class="card-body">
+
+                <h3 class="mb-4 text-center">Create Account</h3>
+
+                <!-- Flash messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST">
+
+                    <input class="form-control mb-3" name="full_name" placeholder="Full Name" required>
+
+                    <input class="form-control mb-3" type="email" name="email" placeholder="Email" required>
+
+                    <input class="form-control mb-3" name="university" placeholder="University">
+
+                    <input class="form-control mb-3" type="password" name="password" placeholder="Password" required>
+
+                    <button class="btn btn-success w-100">Register</button>
+
+                </form>
+
+                <p class="text-center mt-3">
+                    <a href="/login">Already have an account?</a>
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

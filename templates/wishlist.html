@@ -1,0 +1,21 @@
+<h1>My Wishlist</h1>
+
+<a href="/products">Back to Products</a>
+
+<hr>
+
+{% for item in items %}
+<div>
+    <img src="/static/images/{{ item.product.image }}" width="120"><br>
+
+    <h3>{{ item.product.title }}</h3>
+
+    <p>{{ item.product.price }} BDT</p>
+
+    <a href="/product/{{ item.product.id }}">View</a>
+
+    <a href="/wishlist/remove/{{ item.id }}">Remove</a>
+</div>
+
+<hr>
+{% endfor %}

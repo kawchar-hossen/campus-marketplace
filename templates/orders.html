@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Orders</title>
 
-    <!-- MAIN CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -18,46 +17,82 @@
         <a href="{{ url_for('product.all_products') }}" class="btn-back">← Back to Products</a>
     </div>
 
-    <!-- ORDERS LIST -->
     {% if orders %}
+
         <div class="orders-list">
+
             {% for order in orders %}
-                <div class="order-card">
+            <div class="order-card">
 
-                    <!-- IMAGE -->
-                    <div class="order-img">
-                        <img src="{{ url_for('static', filename='images/' ~ order.product.image) }}" 
+                <!-- IMAGE (SAFE) -->
+                <div class="order-img">
+                    {% if order.product and order.product.image %}
+                        <img src="{{ url_for('static', filename='images/' ~ order.product.image) }}"
                              alt="{{ order.product.title }}">
-                    </div>
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/default.png') }}"
+                             alt="No Image">
+                    {% endif %}
+                </div>
 
-                    <!-- DETAILS -->
-                    <div class="order-info">
-                        <h3>{{ order.product.title }}</h3>
+                <!-- DETAILS -->
+                <div class="order-info">
 
-                        <p class="price">৳ {{ order.product.price }}</p>
+                    <h3>
+                        {% if order.product %}
+                            {{ order.product.title }}
+                        {% else %}
+                            Product Removed
+                        {% endif %}
+                    </h3>
 
-                        <p class="order-status">
-                            Status:
-                            <span class="status {{ order.status|lower }}">
-                                {{ order.status }}
-                            </span>
-                        </p>
+                    <p class="price">
+                        {% if order.product %}
+                            ৳ {{ order.product.price }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </p>
 
-                        <p class="seller">
-                            Seller: {{ order.product.seller.full_name }}
-                        </p>
-                    </div>
+                    <p class="order-status">
+                        Status:
+                        <span class="status {{ order.status|lower }}">
+                            {{ order.status }}
+                        </span>
+                    </p>
+
+                    <p class="seller">
+                        Seller:
+                        {% if order.product and order.product.seller %}
+                            {{ order.product.seller.full_name }}
+                        {% else %}
+                            Not Available
+                        {% endif %}
+                    </p>
+
+                    <!-- CANCEL BUTTON -->
+                    {% if order.status == "Pending" %}
+                    <form action="{{ url_for('order.cancel_order', order_id=order.id) }}" method="POST">
+                        <button type="submit" class="btn-cancel">Cancel Order</button>
+                    </form>
+                    {% endif %}
 
                 </div>
+
+            </div>
             {% endfor %}
+
         </div>
+
     {% else %}
+
         <!-- EMPTY STATE -->
         <div class="empty-orders">
             <h2>No Orders Yet</h2>
             <p>Start shopping to see your orders here.</p>
             <a href="{{ url_for('product.all_products') }}" class="btn-shop">Shop Now</a>
         </div>
+
     {% endif %}
 
 </div>

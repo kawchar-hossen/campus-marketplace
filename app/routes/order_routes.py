@@ -9,6 +9,10 @@ from app.services.order_service import (
     complete_order
 )
 
+# import model + db (for cancel)
+from app.models import Order
+from app import db
+
 order = Blueprint("order", __name__)
 
 
@@ -54,3 +58,27 @@ def complete(id):
 
     flash("Order marked completed.", "success")
     return redirect(url_for("order.seller_orders"))
+
+
+# ✅ Cancel Order (NEW)
+@order.route("/cancel/<int:order_id>", methods=["POST"])
+@login_required
+def cancel_order(order_id):
+    order_item = Order.query.get_or_404(order_id)
+
+    # 🔐 Security check
+    if order_item.buyer_id != current_user.id:
+        flash("Unauthorized action!", "danger")
+        return redirect(url_for("order.my_orders"))
+
+    # ❌ Only pending orders can be cancelled
+    if order_item.status != "Pending":
+        flash("Order cannot be cancelled!", "warning")
+        return redirect(url_for("order.my_orders"))
+
+    # 🔄 Update status
+    order_item.status = "Cancelled"
+    db.session.commit()
+
+    flash("Order cancelled successfully!", "success")
+    return redirect(url_for("order.my_orders"))

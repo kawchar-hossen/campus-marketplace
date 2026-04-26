@@ -40,6 +40,7 @@ def create_app():
     from app.routes.chat_routes import chat
     from app.routes.order_routes import order
     from app.routes.admin_routes import admin
+    
 
     app.register_blueprint(main)
     app.register_blueprint(auth)
@@ -47,7 +48,9 @@ def create_app():
     app.register_blueprint(wishlist)
     app.register_blueprint(chat)
     app.register_blueprint(order)
+    #app.register_blueprint(order, url_prefix="/order")
     app.register_blueprint(admin)
+    
 
     from app.sockets.chat_socket import register_socket_events
     register_socket_events(socketio)

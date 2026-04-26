@@ -4,9 +4,16 @@
 
 <div class="wishlist-page">
 
+    <!-- HEADER -->
     <div class="wishlist-header">
-        <h1>My Wishlist</h1>
-        <a href="{{ url_for('product.all_products') }}" class="btn-back">← Back</a>
+        <div>
+            <h1>My Wishlist</h1>
+            <p class="sub-text">Saved items for later</p>
+        </div>
+
+        <a href="{{ url_for('product.all_products') }}" class="btn-back">
+            ← Continue Shopping
+        </a>
     </div>
 
     {% if items %}
@@ -16,49 +23,56 @@
         {% for item in items %}
         <div class="wishlist-card">
 
-            {% if item.product %}
+            <!-- IMAGE (SAFE) -->
+            <div class="wishlist-image">
+                {% if item.product and item.product.image %}
+                    <img src="{{ url_for('static', filename='images/' ~ item.product.image) }}"
+                         alt="Product">
+                {% else %}
+                    <img src="{{ url_for('static', filename='images/default.png') }}"
+                         alt="No Image">
+                {% endif %}
+            </div>
 
-                <img src="{{ url_for('static', filename='images/' + item.product.image) }}" alt="Product">
+            <!-- INFO -->
+            <div class="wishlist-info">
 
-                <div class="wishlist-info">
+                {% if item.product %}
 
                     <h3>{{ item.product.title }}</h3>
 
                     <p class="price">৳ {{ item.product.price }}</p>
 
+                    <p class="wishlist-note">Saved for later</p>
+
                     <div class="wishlist-buttons">
 
-                        <a href="{{ url_for('product.product_detail', id=item.product.id) }}" class="btn-view">
-                            View
+                        <a href="{{ url_for('product.product_detail', id=item.product.id) }}"
+                           class="btn-view">
+                            View Details
                         </a>
 
-                        <a href="{{ url_for('wishlist.remove_wishlist', id=item.id) }}" class="btn-remove">
+                        <a href="{{ url_for('wishlist.remove_wishlist', id=item.id) }}"
+                           class="btn-remove">
                             Remove
                         </a>
 
                     </div>
 
-                </div>
+                {% else %}
 
-            {% else %}
-
-                <div class="wishlist-info">
-
-                    <h3>Product Not Available</h3>
+                    <h3 class="missing">Product Not Available</h3>
 
                     <p class="price">Removed Product</p>
 
-                    <div class="wishlist-buttons">
+                    <a href="{{ url_for('wishlist.remove_wishlist', id=item.id) }}"
+                       class="btn-remove full">
+                        Remove
+                    </a>
 
-                        <a href="{{ url_for('wishlist.remove_wishlist', id=item.id) }}" class="btn-remove">
-                            Remove
-                        </a>
+                {% endif %}
 
-                    </div>
-
-                </div>
-
-            {% endif %}
+            </div>
 
         </div>
         {% endfor %}
@@ -66,10 +80,12 @@
     </div>
 
     {% else %}
-    
+
+    <!-- EMPTY STATE -->
     <div class="empty-wishlist">
-        <h2>No Items Yet</h2>
-        <p>Add products to wishlist.</p>
+        <div class="empty-icon">❤️</div>
+        <h2>Your Wishlist is Empty</h2>
+        <p>Save products you like to view them later</p>
 
         <a href="{{ url_for('product.all_products') }}" class="btn-shop">
             Browse Products
@@ -80,4 +96,4 @@
 
 </div>
 
-{% endblock %}          
+{% endblock %}

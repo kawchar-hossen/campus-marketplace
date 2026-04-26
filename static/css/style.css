@@ -86,72 +86,84 @@ img {
     padding: 40px 20px;
 }
 
+/* HEADER */
 .wishlist-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 10px;
 }
 
 .wishlist-header h1 {
     font-size: 32px;
 }
 
-.btn-back,
-.btn-shop {
-    background: #111;
-    color: #fff;
-    padding: 10px 18px;
-    border-radius: 8px;
+.sub-text {
+    font-size: 14px;
+    color: #777;
 }
 
-.btn-back:hover,
-.btn-shop:hover {
-    background: #333;
-}
-
+/* GRID */
 .wishlist-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 25px;
 }
 
+/* CARD */
 .wishlist-card {
     background: #fff;
-    border-radius: 15px;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     transition: 0.3s;
 }
 
 .wishlist-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-6px);
 }
 
-.wishlist-card img {
+/* IMAGE */
+.wishlist-image img {
     width: 100%;
     height: 220px;
     object-fit: cover;
 }
 
+.no-image {
+    height: 220px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f1f1f1;
+    color: #888;
+}
+
+/* INFO */
 .wishlist-info {
-    padding: 18px;
+    padding: 16px;
 }
 
 .wishlist-info h3 {
-    margin-bottom: 10px;
-    font-size: 20px;
+    font-size: 18px;
+    margin-bottom: 8px;
 }
 
 .price {
-    color: #e63946;
-    font-size: 18px;
+    color: #198754;
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
 }
 
+.wishlist-note {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 12px;
+}
+
+/* BUTTONS */
 .wishlist-buttons {
     display: flex;
     gap: 10px;
@@ -164,6 +176,7 @@ img {
     border-radius: 8px;
     background: #0d6efd;
     color: #fff;
+    font-size: 14px;
 }
 
 .btn-view:hover {
@@ -177,55 +190,132 @@ img {
     border-radius: 8px;
     background: #dc3545;
     color: #fff;
+    font-size: 14px;
 }
 
 .btn-remove:hover {
     background: #bb2d3b;
 }
 
+.btn-remove.full {
+    width: 100%;
+}
+
+/* EMPTY STATE */
 .empty-wishlist {
     text-align: center;
     padding: 80px 20px;
     background: #fff;
-    border-radius: 15px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.empty-icon {
+    font-size: 40px;
+    margin-bottom: 10px;
 }
 
 /* =====================================
-   ADD PRODUCT PAGE
+   ADD PRODUCT PAGE (PROFESSIONAL)
 ===================================== */
 .add-product-page {
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 40px 15px;
+    padding: 50px 15px;
+    background: linear-gradient(135deg, #eef2ff, #f8f9fa);
 }
 
 .add-product-box {
     width: 100%;
     max-width: 700px;
     background: #fff;
-    padding: 35px;
+    padding: 40px;
     border-radius: 18px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
 }
 
-.add-product-box h2 {
+/* Header */
+.form-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.form-header h2 {
     font-size: 32px;
+    margin-bottom: 5px;
 }
 
+.form-header p {
+    color: #666;
+    font-size: 14px;
+}
+
+/* Form */
 .product-form .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
+}
+
+.product-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 14px;
 }
 
 .product-form input,
 .product-form textarea {
     width: 100%;
-    padding: 12px;
+    padding: 12px 14px;
     border: 1px solid #ddd;
     border-radius: 10px;
+    font-size: 14px;
+    transition: 0.3s;
 }
 
+/* Focus effect */
+.product-form input:focus,
+.product-form textarea:focus {
+    border-color: #0d6efd;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(13,110,253,0.1);
+}
+
+/* Row layout */
+.form-row {
+    display: flex;
+    gap: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* File input */
+.file-input {
+    border: none;
+}
+
+/* Submit Button */
+.btn-submit {
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    background: #0d6efd;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.btn-submit:hover {
+    background: #0b5ed7;
+    transform: translateY(-1px);
+}
 /* =====================================
    PRODUCT DETAIL PAGE
 ===================================== */
@@ -417,6 +507,25 @@ img {
     padding: 80px 20px;
     border-radius: 15px;
 }
+
+/*CANCEL BUTTON HERE */
+.btn-cancel {
+    margin-top: 10px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    background: #dc3545;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background: #bb2d3b;
+    transform: translateY(-1px);
+}
+
 
 /* =====================================
    RESPONSIVE

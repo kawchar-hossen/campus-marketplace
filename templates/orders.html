@@ -1,21 +1,66 @@
-<h1>My Orders</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders</title>
 
-<a href="/products">Back to Products</a>
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
 
-<hr>
+<div class="orders-page container">
 
-{% for order in orders %}
-<div>
-    <img src="/static/images/{{ order.product.image }}" width="120"><br>
+    <!-- HEADER -->
+    <div class="orders-header">
+        <h1>My Orders</h1>
+        <a href="{{ url_for('product.all_products') }}" class="btn-back">← Back to Products</a>
+    </div>
 
-    <h3>{{ order.product.title }}</h3>
+    <!-- ORDERS LIST -->
+    {% if orders %}
+        <div class="orders-list">
+            {% for order in orders %}
+                <div class="order-card">
 
-    <p>Price: {{ order.product.price }} BDT</p>
+                    <!-- IMAGE -->
+                    <div class="order-img">
+                        <img src="{{ url_for('static', filename='images/' ~ order.product.image) }}" 
+                             alt="{{ order.product.title }}">
+                    </div>
 
-    <p>Status: {{ order.status }}</p>
+                    <!-- DETAILS -->
+                    <div class="order-info">
+                        <h3>{{ order.product.title }}</h3>
 
-    <p>Seller: {{ order.product.seller.full_name }}</p>
+                        <p class="price">৳ {{ order.product.price }}</p>
+
+                        <p class="order-status">
+                            Status:
+                            <span class="status {{ order.status|lower }}">
+                                {{ order.status }}
+                            </span>
+                        </p>
+
+                        <p class="seller">
+                            Seller: {{ order.product.seller.full_name }}
+                        </p>
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <!-- EMPTY STATE -->
+        <div class="empty-orders">
+            <h2>No Orders Yet</h2>
+            <p>Start shopping to see your orders here.</p>
+            <a href="{{ url_for('product.all_products') }}" class="btn-shop">Shop Now</a>
+        </div>
+    {% endif %}
+
 </div>
 
-<hr>
-{% endfor %}
+</body>
+</html>

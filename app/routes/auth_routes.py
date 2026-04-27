@@ -150,3 +150,89 @@ def logout():
     flash("Logged out successfully.", "info")
 
     return redirect(url_for("main.home"))
+
+
+# =====================================
+# Change Password
+# =====================================
+@auth.route("/change-password", methods=["GET", "POST"])
+@login_required
+def change_password():
+
+    if request.method == "POST":
+
+        current_password = request.form.get("current_password", "").strip()
+        new_password = request.form.get("new_password", "").strip()
+        confirm_password = request.form.get("confirm_password", "").strip()
+
+        # -------------------------
+        # Validation
+        # -------------------------
+        if not current_password or not new_password or not confirm_password:
+            flash("All fields are required.", "danger")
+            return redirect(url_for("auth.change_password"))
+
+        # Check current password
+        if not check_password_hash(current_user.password, current_password):
+            flash("Current password is incorrect.", "danger")
+            return redirect(url_for("auth.change_password"))
+
+        # New password match check
+        if new_password != confirm_password:
+            flash("New passwords do not match.", "danger")
+            return redirect(url_for("auth.change_password"))
+
+        # Password length check
+        if len(new_password) < 8:
+            flash("Password must be at least 8 characters.", "danger")
+            return redirect(url_for("auth.change_password"))
+
+        # Prevent same password reuse
+        if check_password_hash(current_user.password, new_password):
+            flash("New password cannot be the same as current password.", "warning")
+            return redirect(url_for("auth.change_password"))
+
+        # -------------------------
+        # Update Password
+        # -------------------------
+        current_user.password = generate_password_hash(new_password)
+        db.session.commit()
+
+        flash("Password changed successfully.", "success")
+        return redirect(url_for("auth.dashboard"))
+
+    return render_template("change_password.html")
+
+
+# =====================================
+# Forgot Password
+# =====================================
+@auth.route("/forgot-password", methods=["GET", "POST"])
+def forgot_password():
+
+    # If already logged in
+    if current_user.is_authenticated:
+        return redirect(url_for("auth.dashboard"))
+
+    if request.method == "POST":
+
+        email = request.form.get("email", "").strip().lower()
+
+        if not email:
+            flash("Please enter your email.", "danger")
+            return redirect(url_for("auth.forgot_password"))
+
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            flash("No account found with this email.", "warning")
+            return redirect(url_for("auth.forgot_password"))
+
+        # Future upgrade:
+        # send reset email here
+
+        flash("Password reset feature coming soon.", "info")
+        return redirect(url_for("auth.login"))
+
+    return render_template("forgot_password.html")
+

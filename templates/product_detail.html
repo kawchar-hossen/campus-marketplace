@@ -31,22 +31,24 @@
             <!-- 🔹 Buttons -->
             <div class="product-buttons">
 
+                <!-- Back to products -->
                 <a href="/products" class="btn-back-shop">
                     ← Back
                 </a>
 
                 {% if current_user.is_authenticated %}
-                
+
                     <!-- Wishlist -->
                     <a href="{{ url_for('wishlist.add_wishlist', product_id=product.id) }}"
                        class="btn-wishlist">
                         ❤️ Wishlist
                     </a>
 
-                    <!-- Chat (NOT seller) -->
+                    <!-- Chat with Seller (only if not seller) -->
                     {% if current_user.id != product.seller_id %}
-                    <a href="/chat/{{ product.seller_id }}" class="btn-chat">
-                        💬 Chat
+                    <a href="{{ url_for('chat.chat_page', user_id=product.seller_id) }}"
+                       class="btn-chat">
+                        💬 Chat with Seller
                     </a>
                     {% endif %}
 
@@ -54,7 +56,7 @@
 
                 <!-- Seller Controls -->
                 {% if current_user.is_authenticated and current_user.id == product.seller_id %}
-                
+
                     <a href="/product/edit/{{ product.id }}" class="btn-edit">
                         ✏️ Edit
                     </a>
@@ -65,7 +67,7 @@
 
                 {% endif %}
 
-                <!-- Buy Button (NOT seller) -->
+                <!-- Buy Button (only if not seller) -->
                 {% if current_user.is_authenticated and current_user.id != product.seller_id %}
                 <a href="/buy/{{ product.id }}" class="btn-buy">
                     🛒 Buy Now

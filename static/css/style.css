@@ -432,7 +432,7 @@ img {
 }
 
 /* =====================================
-   ORDERS PAGE
+   ORDERS PAGE (FULL UPDATED)
 ===================================== */
 .orders-page {
     padding: 40px 20px;
@@ -449,14 +449,17 @@ img {
 
 .orders-header h1 {
     font-size: 32px;
+    font-weight: 700;
 }
 
+/* ORDER LIST */
 .orders-list {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
+/* SINGLE CARD */
 .order-card {
     display: flex;
     gap: 20px;
@@ -465,18 +468,24 @@ img {
     border-radius: 15px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     align-items: center;
-    transition: 0.3s;
+    transition: 0.3s ease;
 }
 
 .order-card:hover {
     transform: translateY(-4px);
 }
 
+/* IMAGE */
 .order-img img {
     width: 130px;
     height: 130px;
     object-fit: cover;
     border-radius: 10px;
+}
+
+/* INFO */
+.order-info {
+    flex: 1;
 }
 
 .order-info h3 {
@@ -488,33 +497,54 @@ img {
     color: #198754;
     font-size: 18px;
     font-weight: bold;
+    margin-bottom: 8px;
 }
 
+.order-status,
+.seller {
+    margin-top: 6px;
+    font-size: 15px;
+    color: #555;
+}
+
+/* STATUS BADGES */
 .status {
     padding: 5px 10px;
     border-radius: 6px;
     font-size: 14px;
     color: #fff;
+    font-weight: 600;
 }
 
-.status.pending { background: #ffc107; color: #000; }
-.status.completed { background: #198754; }
-.status.cancelled { background: #dc3545; }
-
-.empty-orders {
-    text-align: center;
-    background: #fff;
-    padding: 80px 20px;
-    border-radius: 15px;
+.status.pending {
+    background: #f59e0b;
+    color: #fff;
 }
 
-/*CANCEL BUTTON HERE */
+.status.completed {
+    background: #198754;
+}
+
+.status.cancelled {
+    background: #dc3545;
+}
+
+/* =====================================
+   ACTION BUTTON AREA
+===================================== */
+.order-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+/* CANCEL BUTTON */
 .btn-cancel {
-    margin-top: 10px;
     padding: 10px 16px;
     border-radius: 8px;
     border: none;
-    background: #dc3545;
+    background: #f59e0b;
     color: #fff;
     font-weight: 600;
     cursor: pointer;
@@ -522,10 +552,59 @@ img {
 }
 
 .btn-cancel:hover {
-    background: #bb2d3b;
-    transform: translateY(-1px);
+    background: #d97706;
+    transform: translateY(-2px);
 }
 
+/* DELETE ORDER BUTTON */
+.btn-delete-order {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    background: #dc2626;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.btn-delete-order:hover {
+    background: #b91c1c;
+    transform: translateY(-2px);
+}
+
+/* SHOP NOW BUTTON */
+.btn-shop {
+    display: inline-block;
+    margin-top: 15px;
+    background: #111;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.btn-shop:hover {
+    background: #333;
+}
+
+/* EMPTY STATE */
+.empty-orders {
+    text-align: center;
+    background: #fff;
+    padding: 80px 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+.empty-orders h2 {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.empty-orders p {
+    color: #666;
+}
 
 /* =====================================
    RESPONSIVE
@@ -539,5 +618,603 @@ img {
     .order-img img {
         width: 100%;
         height: 220px;
+    }
+
+    .order-actions {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .btn-cancel,
+    .btn-delete-order {
+        width: 100%;
+    }
+
+    .orders-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+
+/* =====================================
+   CHANGE PASSWORD PAGE
+===================================== */
+
+.change-password-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 15px;
+    background: linear-gradient(135deg, #eef2ff, #f8f9fa);
+}
+
+.change-password-box {
+    width: 100%;
+    max-width: 600px;
+    background: #fff;
+    padding: 40px;
+    border-radius: 18px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+}
+
+.change-password-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.change-password-header h2 {
+    font-size: 30px;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #222;
+}
+
+.change-password-header p {
+    font-size: 14px;
+    color: #666;
+}
+
+.change-password-form .form-group {
+    margin-bottom: 20px;
+}
+
+.change-password-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.change-password-form input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: 0.3s ease;
+    background: #fff;
+}
+
+.change-password-form input:focus {
+    border-color: #0d6efd;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(13,110,253,0.10);
+}
+
+.btn-change-password {
+    width: 100%;
+    padding: 13px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 10px;
+    background: #0d6efd;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.btn-change-password:hover {
+    background: #0b5ed7;
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .change-password-box {
+        padding: 30px 20px;
+    }
+
+    .change-password-header h2 {
+        font-size: 24px;
+    }
+}
+
+
+/* =====================================
+   FORGOT PASSWORD + RESET PASSWORD PAGE
+===================================== */
+
+.forgot-password-page,
+.reset-password-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px 15px;
+    background: linear-gradient(135deg, #eef2ff, #f8f9fa);
+}
+
+.forgot-password-box,
+.reset-password-box {
+    width: 100%;
+    max-width: 600px;
+    background: #fff;
+    padding: 40px;
+    border-radius: 18px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+}
+
+/* Header */
+.forgot-password-header,
+.reset-password-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.forgot-password-header h2,
+.reset-password-header h2 {
+    font-size: 30px;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #222;
+}
+
+.forgot-password-header p,
+.reset-password-header p {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Form */
+.forgot-password-form .form-group,
+.reset-password-form .form-group {
+    margin-bottom: 20px;
+}
+
+.forgot-password-form label,
+.reset-password-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.forgot-password-form input,
+.reset-password-form input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 14px;
+    transition: 0.3s ease;
+    background: #fff;
+}
+
+.forgot-password-form input:focus,
+.reset-password-form input:focus {
+    border-color: #0d6efd;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(13,110,253,0.10);
+}
+
+/* Buttons */
+.btn-forgot-password,
+.btn-reset-password {
+    width: 100%;
+    padding: 13px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 10px;
+    background: #0d6efd;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.btn-forgot-password:hover,
+.btn-reset-password:hover {
+    background: #0b5ed7;
+    transform: translateY(-2px);
+}
+
+/* Footer Link */
+.auth-footer {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.auth-footer a {
+    color: #0d6efd;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Flash Messages */
+.alert {
+    border-radius: 10px;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .forgot-password-box,
+    .reset-password-box {
+        padding: 30px 20px;
+    }
+
+    .forgot-password-header h2,
+    .reset-password-header h2 {
+        font-size: 24px;
+    }
+}
+
+/* =====================================
+   EDIT PRODUCT PAGE (STARTUP STANDARD)
+===================================== */
+
+.edit-product-page {
+    min-height: 100vh;
+    padding: 60px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #eef2ff, #f8f9fa);
+}
+
+.edit-product-container {
+    width: 100%;
+    max-width: 780px;
+    background: #ffffff;
+    padding: 45px;
+    border-radius: 20px;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+    transition: 0.3s ease;
+}
+
+/* Header */
+.edit-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.edit-header h2 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 8px;
+}
+
+.edit-header p {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Form */
+.edit-product-form .form-group {
+    margin-bottom: 22px;
+}
+
+.edit-product-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.edit-product-form input,
+.edit-product-form textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #dcdfe4;
+    border-radius: 12px;
+    font-size: 14px;
+    background: #fff;
+    transition: 0.3s ease;
+    resize: none;
+}
+
+/* Focus Effect */
+.edit-product-form input:focus,
+.edit-product-form textarea:focus {
+    border-color: #0d6efd;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.08);
+}
+
+/* Row Layout */
+.form-row {
+    display: flex;
+    gap: 18px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* Actions */
+.edit-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+/* Cancel Button */
+.edit-actions .btn-cancel {
+    flex: 1;
+    text-align: center;
+    padding: 14px;
+    background: #6c757d;
+    color: #fff;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: 0.3s ease;
+}
+
+.edit-actions .btn-cancel:hover {
+    background: #5c636a;
+    transform: translateY(-2px);
+}
+
+/* Update Button */
+.btn-update {
+    flex: 1;
+    border: none;
+    padding: 14px;
+    background: #0d6efd;
+    color: #fff;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.btn-update:hover {
+    background: #0b5ed7;
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .edit-product-container {
+        padding: 30px 22px;
+    }
+
+    .edit-header h2 {
+        font-size: 26px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .edit-actions {
+        flex-direction: column;
+    }
+
+    .edit-actions .btn-cancel,
+    .btn-update {
+        width: 100%;
+    }
+}
+
+
+/* =====================================
+   CHAT PAGE (INDUSTRY STANDARD)
+===================================== */
+
+.chat-page {
+    min-height: 100vh;
+    background: #f4f7fb;
+    padding: 40px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chat-container {
+    width: 100%;
+    max-width: 900px;
+    height: 80vh;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* =====================================
+   CHAT HEADER
+===================================== */
+
+.chat-header {
+    background: #0d6efd;
+    color: #ffffff;
+    padding: 22px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chat-user-info h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.chat-user-info p {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+/* =====================================
+   MESSAGE AREA
+===================================== */
+
+.chat-messages {
+    flex: 1;
+    padding: 25px;
+    overflow-y: auto;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* Single Message */
+
+.message {
+    max-width: 75%;
+    padding: 14px 18px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.5;
+    position: relative;
+    word-wrap: break-word;
+}
+
+/* My Message */
+
+.message.sent {
+    align-self: flex-end;
+    background: #0d6efd;
+    color: #ffffff;
+    border-bottom-right-radius: 6px;
+}
+
+/* Other User Message */
+
+.message.received {
+    align-self: flex-start;
+    background: #ffffff;
+    color: #222;
+    border: 1px solid #e5e7eb;
+    border-bottom-left-radius: 6px;
+}
+
+/* Sender Name */
+
+.message strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* =====================================
+   INPUT AREA
+===================================== */
+
+.chat-input-area {
+    padding: 20px 25px;
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+}
+
+.chat-form {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.chat-form input {
+    flex: 1;
+    padding: 14px 18px;
+    border: 1px solid #dcdfe4;
+    border-radius: 14px;
+    font-size: 14px;
+    outline: none;
+    transition: 0.3s ease;
+}
+
+.chat-form input:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.08);
+}
+
+/* Send Button */
+
+.btn-send {
+    border: none;
+    background: #0d6efd;
+    color: #ffffff;
+    padding: 14px 28px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.btn-send:hover {
+    background: #0b5ed7;
+    transform: translateY(-2px);
+}
+
+/* =====================================
+   RESPONSIVE
+===================================== */
+
+@media (max-width: 768px) {
+    .chat-container {
+        height: 90vh;
+    }
+
+    .chat-header {
+        padding: 18px 20px;
+    }
+
+    .chat-user-info h2 {
+        font-size: 20px;
+    }
+
+    .chat-messages {
+        padding: 18px;
+    }
+
+    .message {
+        max-width: 90%;
+    }
+
+    .chat-input-area {
+        padding: 16px;
+    }
+
+    .chat-form {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .chat-form input,
+    .btn-send {
+        width: 100%;
     }
 }

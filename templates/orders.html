@@ -1,3 +1,4 @@
+<!-- templates/orders.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +25,7 @@
             {% for order in orders %}
             <div class="order-card">
 
-                <!-- IMAGE (SAFE) -->
+                <!-- IMAGE -->
                 <div class="order-img">
                     {% if order.product and order.product.image %}
                         <img src="{{ url_for('static', filename='images/' ~ order.product.image) }}"
@@ -70,12 +71,29 @@
                         {% endif %}
                     </p>
 
-                    <!-- CANCEL BUTTON -->
-                    {% if order.status == "Pending" %}
-                    <form action="{{ url_for('order.cancel_order', order_id=order.id) }}" method="POST">
-                        <button type="submit" class="btn-cancel">Cancel Order</button>
-                    </form>
-                    {% endif %}
+                    <!-- ACTION BUTTONS -->
+                    <div class="order-actions">
+
+                        <!-- Cancel only if Pending -->
+                        {% if order.status == "Pending" %}
+                        <form action="{{ url_for('order.cancel_order', order_id=order.id) }}" method="POST">
+                            <button type="submit" class="btn-cancel">
+                                Cancel Order
+                            </button>
+                        </form>
+                        {% endif %}
+
+                        <!-- Delete only if Cancelled -->
+                        {% if order.status == "Cancelled" %}
+                        <form action="{{ url_for('order.delete_order', order_id=order.id) }}" method="POST"
+                              onsubmit="return confirm('Delete this cancelled order?');">
+                            <button type="submit" class="btn-delete-order">
+                                Delete
+                            </button>
+                        </form>
+                        {% endif %}
+
+                    </div>
 
                 </div>
 
@@ -86,7 +104,7 @@
 
     {% else %}
 
-        <!-- EMPTY STATE -->
+        <!-- EMPTY -->
         <div class="empty-orders">
             <h2>No Orders Yet</h2>
             <p>Start shopping to see your orders here.</p>

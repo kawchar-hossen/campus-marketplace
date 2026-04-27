@@ -1,7 +1,12 @@
+# app/routes/order_routes.py
+
 from flask import Blueprint, redirect, url_for, flash, render_template
 from flask_login import login_required, current_user
 
-# import service functions
+from app import db
+from app.models import Order
+
+# services
 from app.services.order_service import (
     place_order,
     get_user_orders,
@@ -9,14 +14,12 @@ from app.services.order_service import (
     complete_order
 )
 
-# import model + db (for cancel)
-from app.models import Order
-from app import db
-
 order = Blueprint("order", __name__)
 
 
-# ✅ Buy Product
+# =====================================
+# BUY PRODUCT
+# =====================================
 @order.route("/buy/<int:product_id>")
 @login_required
 def buy_product(product_id):
@@ -30,7 +33,9 @@ def buy_product(product_id):
     return redirect(url_for("order.my_orders"))
 
 
-# ✅ Buyer Orders
+# =====================================
+# BUYER ORDERS
+# =====================================
 @order.route("/orders")
 @login_required
 def my_orders():
@@ -38,7 +43,9 @@ def my_orders():
     return render_template("orders.html", orders=orders)
 
 
-# ✅ Seller Orders Dashboard
+# =====================================
+# SELLER ORDERS
+# =====================================
 @order.route("/seller/orders")
 @login_required
 def seller_orders():
@@ -46,7 +53,9 @@ def seller_orders():
     return render_template("seller_orders.html", sales=sales)
 
 
-# ✅ Mark Order Completed
+# =====================================
+# COMPLETE ORDER
+# =====================================
 @order.route("/order/complete/<int:id>")
 @login_required
 def complete(id):
@@ -54,31 +63,57 @@ def complete(id):
 
     if error:
         flash(error, "danger")
-        return redirect("/")
+        return redirect(url_for("order.seller_orders"))
 
     flash("Order marked completed.", "success")
     return redirect(url_for("order.seller_orders"))
 
 
-# ✅ Cancel Order (NEW)
+# =====================================
+# CANCEL ORDER
+# =====================================
 @order.route("/cancel/<int:order_id>", methods=["POST"])
 @login_required
 def cancel_order(order_id):
     order_item = Order.query.get_or_404(order_id)
 
-    # 🔐 Security check
+    # Security check
     if order_item.buyer_id != current_user.id:
         flash("Unauthorized action!", "danger")
         return redirect(url_for("order.my_orders"))
 
-    # ❌ Only pending orders can be cancelled
+    # Only pending order can cancel
     if order_item.status != "Pending":
-        flash("Order cannot be cancelled!", "warning")
+        flash("Only pending orders can be cancelled.", "warning")
         return redirect(url_for("order.my_orders"))
 
-    # 🔄 Update status
     order_item.status = "Cancelled"
     db.session.commit()
 
     flash("Order cancelled successfully!", "success")
+    return redirect(url_for("order.my_orders"))
+
+
+# =====================================
+# DELETE ORDER (ONLY CANCELLED)
+# =====================================
+@order.route("/delete/<int:order_id>", methods=["POST"])
+@login_required
+def delete_order(order_id):
+    order_item = Order.query.get_or_404(order_id)
+
+    # Security check
+    if order_item.buyer_id != current_user.id:
+        flash("Unauthorized action!", "danger")
+        return redirect(url_for("order.my_orders"))
+
+    # Only cancelled order can delete
+    if order_item.status != "Cancelled":
+        flash("Only cancelled orders can be deleted.", "warning")
+        return redirect(url_for("order.my_orders"))
+
+    db.session.delete(order_item)
+    db.session.commit()
+
+    flash("Order deleted successfully!", "success")
     return redirect(url_for("order.my_orders"))

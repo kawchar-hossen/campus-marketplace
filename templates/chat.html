@@ -1,60 +1,74 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Chat</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-<h2>Chat with {{ other_user.full_name }}</h2>
+{% block content %}
 
-<div id="messages" style="height:300px; overflow:auto; border:1px solid gray; padding:10px;">
+<div class="chat-page">
 
-{% for msg in messages %}
-<p>
-<b>
-{% if msg.sender_id == current_user.id %}
-You
-{% else %}
-{{ other_user.full_name }}
-{% endif %}
-:</b>
+    <div class="chat-container">
 
-{{ msg.text }}
-</p>
-{% endfor %}
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <h2>Chat with {{ other_user.full_name }}</h2>
+            <p>Send and receive messages instantly</p>
+        </div>
+
+        <!-- Message Area -->
+        <div id="messages" class="chat-messages">
+
+            {% for msg in messages %}
+                <div class="message-item {% if msg.sender_id == current_user.id %}my-message{% else %}other-message{% endif %}">
+
+                    <strong>
+                        {% if msg.sender_id == current_user.id %}
+                            You
+                        {% else %}
+                            {{ other_user.full_name }}
+                        {% endif %}
+                    </strong>
+
+                    <br>
+
+                    {{ msg.text }}
+
+                </div>
+            {% endfor %}
+
+        </div>
+
+        <!-- Input Section -->
+        <div class="chat-input-area">
+
+            <input
+                type="text"
+                id="message_input"
+                placeholder="Type your message..."
+                autocomplete="off"
+            >
+
+            <button
+                type="button"
+                onclick="sendMessage()"
+                class="btn-send"
+            >
+                Send
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
 
-<br>
 
-<input type="text" id="message_input" placeholder="Type message">
-<button onclick="sendMessage()">Send</button>
-
+<!-- Socket.IO -->
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
+<!-- Chat Script -->
 <script>
-const socket = io();
-
-socket.emit("join", {
-    receiver_id: {{ other_user.id }}
-});
-
-socket.on("receive_message", function(data){
-    let box = document.getElementById("messages");
-    box.innerHTML += "<p><b>" + data.sender + ":</b> " + data.text + "</p>";
-});
-
-function sendMessage(){
-    let text = document.getElementById("message_input").value;
-
-    socket.emit("send_message", {
-        receiver_id: {{ other_user.id }},
-        text: text
-    });
-
-    document.getElementById("message_input").value = "";
-}
+    const receiverId = {{ other_user.id }};
+    const currentUserId = {{ current_user.id }};
 </script>
 
-</body>
-</html>
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+
+{% endblock %}

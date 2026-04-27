@@ -1,53 +1,10 @@
-// =====================================
-// static/js/chat.js
-// =====================================
-
 const socket = io();
 
-const messageBox = document.getElementById("messages");
-const messageInput = document.getElementById("message_input");
+socket.emit("join", {});
 
-
-// =====================================
-// Join Personal Room
-// =====================================
-socket.emit("join", {
-    receiver_id: receiverId
-});
-
-
-// =====================================
-// Receive New Message
-// =====================================
-socket.on("receive_message", function (data) {
-    const newMessage = document.createElement("div");
-
-    newMessage.classList.add("message-item");
-
-    if (data.sender_id === currentUserId) {
-        newMessage.classList.add("my-message");
-        newMessage.innerHTML = `
-            <strong>You</strong><br>
-            ${data.text}
-        `;
-    } else {
-        newMessage.classList.add("other-message");
-        newMessage.innerHTML = `
-            <strong>${data.sender}</strong><br>
-            ${data.text}
-        `;
-    }
-
-    messageBox.appendChild(newMessage);
-    messageBox.scrollTop = messageBox.scrollHeight;
-});
-
-
-// =====================================
-// Send Message
-// =====================================
 function sendMessage() {
-    const text = messageInput.value.trim();
+    const input = document.getElementById("message_input");
+    const text = input.value.trim();
 
     if (!text) return;
 
@@ -56,23 +13,23 @@ function sendMessage() {
         text: text
     });
 
-    messageInput.value = "";
-    messageInput.focus();
+    input.value = "";
 }
 
+socket.on("receive_message", function(data) {
+    const messages = document.getElementById("messages");
 
-// =====================================
-// Send on Enter Key
-// =====================================
-messageInput.addEventListener("keypress", function (e) {
-    if (e.key === "Enter") {
-        e.preventDefault();
-        sendMessage();
+    const div = document.createElement("div");
+    div.classList.add("message-item");
+
+    if (data.sender_id === currentUserId) {
+        div.classList.add("my-message");
+        div.innerHTML = "<strong>You</strong><br>" + data.text;
+    } else {
+        div.classList.add("other-message");
+        div.innerHTML = "<strong>" + data.sender + "</strong><br>" + data.text;
     }
+
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
 });
-
-
-// =====================================
-// Auto Scroll
-// =====================================
-messageBox.scrollTop = messageBox.scrollHeight;

@@ -116,6 +116,6 @@ def create_app():
     # VERY IMPORTANT
     # =====================================
 
-    # app.sockets.chat_socket
+    #import app.sockets.chat_socket
 
     return app

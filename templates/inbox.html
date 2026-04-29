@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Your Messages</h2>
+
+{% for user in users %}
+<div class="chat-preview">
+    <a href="{{ url_for('chat.chat_page', user_id=user.id) }}">
+        <strong>{{ user.full_name }}</strong>
+        <p>Click to open chat</p>
+    </a>
+</div>
+{% endfor %}
+
+{% endblock %}

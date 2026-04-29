@@ -10,6 +10,9 @@ from sqlalchemy.exc import IntegrityError
 
 from app import db
 from app.models.user import User
+from app.utils.token import generate_reset_token
+from app.utils.token import verify_reset_token
+
 
 auth = Blueprint("auth", __name__)
 
@@ -228,11 +231,48 @@ def forgot_password():
             flash("No account found with this email.", "warning")
             return redirect(url_for("auth.forgot_password"))
 
-        # Future upgrade:
-        # send reset email here
 
-        flash("Password reset feature coming soon.", "info")
+        token = generate_reset_token(user.email)
+
+        reset_link = url_for(
+            "auth.reset_password",
+            token=token,
+            _external=True
+        )
+
+        print("RESET LINK:", reset_link)  # TEMP (see in terminal)
+
+        flash("Reset link sent! Check terminal (email simulation).", "success")
         return redirect(url_for("auth.login"))
 
     return render_template("forgot_password.html")
 
+# =====================================
+# reset password
+# =====================================
+
+@auth.route("/reset-password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+
+    email = verify_reset_token(token)
+
+    if not email:
+        flash("Invalid or expired reset link.", "danger")
+        return redirect(url_for("auth.login"))
+
+    user = User.query.filter_by(email=email).first()
+
+    if request.method == "POST":
+        new_password = request.form.get("password", "").strip()
+
+        if len(new_password) < 6:
+            flash("Password must be at least 6 characters.", "danger")
+            return redirect(request.url)
+
+        user.password = generate_password_hash(new_password)
+        db.session.commit()
+
+        flash("Password reset successful. Please login.", "success")
+        return redirect(url_for("auth.login"))
+
+    return render_template("reset_password.html")

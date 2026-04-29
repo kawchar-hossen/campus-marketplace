@@ -17,10 +17,29 @@ from app import mail
 from app.utils.otp import generate_otp
 from app.utils.otp import verify_otp as check_otp
 from flask import session
+import re
 
 
 auth = Blueprint("auth", __name__)
 
+
+def is_strong_password(password):
+    if len(password) < 8:
+        return "Password must be at least 8 characters."
+
+    if not re.search(r"[A-Z]", password):
+        return "Password must contain at least 1 uppercase letter."
+
+    if not re.search(r"[a-z]", password):
+        return "Password must contain at least 1 lowercase letter."
+
+    if not re.search(r"[0-9]", password):
+        return "Password must contain at least 1 number."
+
+    if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+        return "Password must contain at least 1 special character."
+
+    return None
 
 # =====================================
 # Register
@@ -46,10 +65,12 @@ def register():
             flash("All fields are required.", "danger")
             return redirect(url_for("auth.register"))
 
-        if len(password) < 6:
-            flash("Password must be at least 6 characters.", "danger")
-            return redirect(url_for("auth.register"))
+        error = is_strong_password(password)
 
+        if error:
+            flash(error, "danger")
+            return redirect(url_for("auth.register"))
+        
         # -------------------------
         # Check duplicate email
         # -------------------------

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Verify Bkash Payment OTP</h2>
+
+<p>Product: {{ product.title }}</p>
+
+<form method="POST">
+
+    <input type="text" name="otp" class="form-control" placeholder="Enter OTP">
+
+    <button class="btn btn-success mt-2">
+        Verify & Pay
+    </button>
+
+</form>
+
+{% endblock %}

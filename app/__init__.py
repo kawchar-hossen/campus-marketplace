@@ -101,7 +101,7 @@ def create_app():
     from app.routes.chat_routes import chat
     from app.routes.order_routes import order
     from app.routes.admin_routes import admin
-
+    from app.routes.payment_routes import payment
     # =====================================
     # Register Blueprints
     # =====================================
@@ -113,6 +113,7 @@ def create_app():
     app.register_blueprint(chat)
     app.register_blueprint(order)
     app.register_blueprint(admin)
+    app.register_blueprint(payment)
 
     # =====================================
     # Import Socket Events

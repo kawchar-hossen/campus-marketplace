@@ -28,23 +28,147 @@
                 {{ product.description or "No description available for this product." }}
             </p>
 
+            <!-- ================================= -->
+            <!-- 💬 COMMENT SECTION -->
+            <!-- ================================= -->
+
+            <hr>
+
+            <h4 class="mt-4">Comments</h4>
+
+            <!-- 💬 Comment Form -->
+            {% if current_user.is_authenticated %}
+            <form method="POST" class="mb-4">
+
+                <textarea 
+                    name="comment" 
+                    class="form-control" 
+                    rows="3"
+                    placeholder="Write a comment..."
+                    required
+                ></textarea>
+
+                <button class="btn btn-primary mt-2">
+                    Post Comment
+                </button>
+
+            </form>
+            {% else %}
+            <p class="text-muted">
+                Please <a href="{{ url_for('auth.login') }}">login</a> to comment.
+            </p>
+            {% endif %}
+
+            <!-- 📌 Comments List -->
+            {% for comment in comments %}
+
+            <div class="border rounded p-3 mb-3">
+
+                <!-- 👤 User Info -->
+                <div class="d-flex justify-content-between">
+                    <strong>{{ comment.user.full_name }}</strong>
+                    <small class="text-muted">
+                        {{ comment.created_at.strftime('%d %b %Y, %H:%M') }}
+                    </small>
+                </div>
+
+                <!-- 💬 Comment Text -->
+                <p class="mt-2">{{ comment.text }}</p>
+
+                <!-- 👍 REACTIONS (ADD HERE) -->
+                <div class="d-flex gap-2 mt-2 align-items-center">
+
+                    <div class="reaction-wrapper position-relative">
+
+                        <button type="button"
+                                class="btn btn-sm btn-outline-secondary"
+                                onclick="this.nextElementSibling.classList.toggle('d-none')">
+                            👍 React
+                        </button>
+
+                        <div class="reaction-box position-absolute bg-white p-2 border rounded d-none">
+
+                            <span onclick="react({{ comment.id }}, 'like', this)">👍</span>
+                            <span onclick="react({{ comment.id }}, 'love', this)">❤️</span>
+                            <span onclick="react({{ comment.id }}, 'haha', this)">😂</span>
+                            <span onclick="react({{ comment.id }}, 'wow', this)">😮</span>
+                            <span onclick="react({{ comment.id }}, 'sad', this)">😢</span>
+                            <span onclick="react({{ comment.id }}, 'angry', this)">😡</span>
+
+                        </div>
+                    </div>
+
+                    <small id="reaction-count-{{ comment.id }}">
+                        👍 0 ❤️ 0 😂 0 😮 0 😢 0 😡 0
+                    </small>
+
+                </div>
+
+                <!-- 🔥 Reply Button -->
+                {% if current_user.is_authenticated %}
+                <button class="btn btn-sm btn-link p-0"
+                        onclick="toggleReply({{ comment.id }})">
+                    Reply
+                </button>
+                {% endif %}
+
+                <!-- 🔥 Reply Form -->
+                <form method="POST" id="reply-{{ comment.id }}" class="mt-2 d-none">
+
+                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+
+                    <input 
+                        type="text" 
+                        name="comment" 
+                        class="form-control form-control-sm"
+                        placeholder="Write a reply..."
+                        required
+                    >
+
+                    <button class="btn btn-sm btn-primary mt-1">
+                        Reply
+                    </button>
+                </form>
+
+                <!-- 🔥 Replies -->
+                {% for reply in comment.replies %}
+                <div class="ms-4 mt-3 border-start ps-3">
+
+                    <div class="d-flex justify-content-between">
+                        <strong>{{ reply.user.full_name }}</strong>
+                        <small class="text-muted">
+                            {{ reply.created_at.strftime('%d %b %Y, %H:%M') }}
+                        </small>
+                    </div>
+
+                    <p class="mb-0">{{ reply.text }}</p>
+
+                </div>
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+            <p class="text-muted">No comments yet. Be the first!</p>
+            {% endfor %}
+
+            <!-- ================================= -->
             <!-- 🔹 Buttons -->
+            <!-- ================================= -->
+
             <div class="product-buttons">
 
-                <!-- Back to products -->
                 <a href="/products" class="btn-back-shop">
                     ← Back
                 </a>
 
                 {% if current_user.is_authenticated %}
 
-                    <!-- Wishlist -->
                     <a href="{{ url_for('wishlist.add_wishlist', product_id=product.id) }}"
                        class="btn-wishlist">
                         ❤️ Wishlist
                     </a>
 
-                    <!-- Chat with Seller (only if not seller) -->
                     {% if current_user.id != product.seller_id %}
                     <a href="{{ url_for('chat.chat_page', user_id=product.seller_id) }}"
                        class="btn-chat">
@@ -54,7 +178,6 @@
 
                 {% endif %}
 
-                <!-- Seller Controls -->
                 {% if current_user.is_authenticated and current_user.id == product.seller_id %}
 
                     <a href="/product/edit/{{ product.id }}" class="btn-edit">
@@ -67,7 +190,6 @@
 
                 {% endif %}
 
-                <!-- Buy Button (only if not seller) -->
                 {% if current_user.is_authenticated and current_user.id != product.seller_id %}
                 <a href="/buy/{{ product.id }}" class="btn-buy">
                     🛒 Buy Now
@@ -81,5 +203,80 @@
     </div>
 
 </div>
+
+<script>
+function toggleReply(id) {
+    const form = document.getElementById("reply-" + id);
+
+    if (form.classList.contains("d-none")) {
+        form.classList.remove("d-none");
+    } else {
+        form.classList.add("d-none");
+    }
+}
+
+// ❤️ React to comment
+function react(commentId, type, el) {
+
+    fetch(`/comment/react/${commentId}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            reaction: type
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        if (data.error === "login_required") {
+            window.location.href = "/login";
+            return;
+        }
+
+        if (!data.counts) return;
+
+        const c = data.counts;
+
+        // =========================
+        // UPDATE COUNTS
+        // =========================
+        document.getElementById(`reaction-count-${commentId}`).innerText =
+            `👍 ${c.like} ❤️ ${c.love} 😂 ${c.haha} 😮 ${c.wow} 😢 ${c.sad} 😡 ${c.angry}`;
+
+        // =========================
+        // VISUAL HIGHLIGHT
+        // =========================
+        const wrapper = el.closest(".reaction-wrapper");
+
+        // remove old highlight
+        wrapper.querySelectorAll("span").forEach(s => {
+            s.classList.remove("selected-reaction");
+        });
+
+        // highlight selected only if exists
+        if (data.user_reaction) {
+            wrapper.querySelectorAll("span").forEach(s => {
+                if (s.innerText === reactionEmoji(data.user_reaction)) {
+                    s.classList.add("selected-reaction");
+                }
+            });
+        }
+    });
+}
+
+// emoji mapper
+function reactionEmoji(type) {
+    return {
+        like: "👍",
+        love: "❤️",
+        haha: "😂",
+        wow: "😮",
+        sad: "😢",
+        angry: "😡"
+    }[type];
+}
+</script>
 
 {% endblock %}

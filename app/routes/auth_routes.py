@@ -56,6 +56,7 @@ def register():
         full_name = request.form.get("full_name", "").strip()
         email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "").strip()
+        confirm_password = request.form.get("confirm_password", "").strip()
         university = request.form.get("university", "").strip()
 
         # -------------------------
@@ -63,6 +64,11 @@ def register():
         # -------------------------
         if not full_name or not email or not password or not university:
             flash("All fields are required.", "danger")
+            return redirect(url_for("auth.register"))
+
+        # 🔥 MATCH CHECK (ADD HERE)
+        if password != confirm_password:
+            flash("Passwords do not match.", "danger")
             return redirect(url_for("auth.register"))
 
         error = is_strong_password(password)

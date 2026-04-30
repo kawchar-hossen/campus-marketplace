@@ -29,14 +29,53 @@
 
                 <form method="POST">
 
+                    <!-- Full Name -->
                     <input class="form-control mb-3" name="full_name" placeholder="Full Name" required>
 
+                    <!-- Email -->
                     <input class="form-control mb-3" type="email" name="email" placeholder="Email" required>
 
+                    <!-- University -->
                     <input class="form-control mb-3" name="university" placeholder="University">
 
-                    <input class="form-control mb-3" type="password" name="password" placeholder="Password" required>
+                    <!-- 🔥 Password with Toggle -->
+                    <div class="input-group mb-2">
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                            👁️
+                        </button>
+                    </div>
 
+                    <!-- 🔥 Strength Bar -->
+                    <div class="progress mb-2" style="height: 8px;">
+                        <div id="strength-bar" class="progress-bar" style="width: 0%;"></div>
+                    </div>
+
+                    <!-- Strength Text -->
+                    <div id="strength-text" class="small mb-2"></div>
+
+                    <!-- Password Rules -->
+                    <div id="password-rules" class="small text-muted mb-3">
+                        <div id="length">❌ At least 8 characters</div>
+                        <div id="upper">❌ One uppercase letter</div>
+                        <div id="lower">❌ One lowercase letter</div>
+                        <div id="number">❌ One number</div>
+                        <div id="special">❌ One special character</div>
+                    </div>
+
+                    <!-- 🔁 Confirm Password -->
+                    <div class="input-group mb-2">
+                        <input type="password" class="form-control" name="confirm_password" id="confirmPassword" placeholder="Confirm Password" required>
+                        
+                        <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                            👁️
+                        </button>
+                    </div>
+
+                    <!-- Match Status -->
+                    <div id="match-text" class="small mb-3"></div>
+
+                    <!-- Submit -->
                     <button class="btn btn-success w-100">Register</button>
 
                 </form>
@@ -52,5 +91,105 @@
     </div>
 
 </div>
+
+<!-- ========================= -->
+<!-- 🔥 JAVASCRIPT SECTION -->
+<!-- ========================= -->
+
+<script>
+const password = document.getElementById("password");
+const bar = document.getElementById("strength-bar");
+const text = document.getElementById("strength-text");
+const toggle = document.getElementById("togglePassword");
+
+// 👁️ Show/Hide Password
+toggle.addEventListener("click", function () {
+    const type = password.getAttribute("type") === "password" ? "text" : "password";
+    password.setAttribute("type", type);
+    this.textContent = type === "password" ? "👁️" : "🙈";
+});
+
+// 🔐 Password Strength + Rules
+password.addEventListener("input", function () {
+    const val = password.value;
+
+    const rules = {
+        length: val.length >= 8,
+        upper: /[A-Z]/.test(val),
+        lower: /[a-z]/.test(val),
+        number: /[0-9]/.test(val),
+        special: /[!@#$%^&*(),.?":{}|<>]/.test(val)
+    };
+
+    // Update rules UI
+    for (let key in rules) {
+        const el = document.getElementById(key);
+        if (rules[key]) {
+            el.innerHTML = "✅ " + el.innerText.slice(2);
+            el.style.color = "green";
+        } else {
+            el.innerHTML = "❌ " + el.innerText.slice(2);
+            el.style.color = "red";
+        }
+    }
+
+    const passed = Object.values(rules).filter(v => v).length;
+
+    let width = 0;
+    let color = "";
+    let label = "";
+
+    if (passed <= 2) {
+        width = 30;
+        color = "bg-danger";
+        label = "Weak";
+    } else if (passed <= 4) {
+        width = 65;
+        color = "bg-warning";
+        label = "Medium";
+    } else {
+        width = 100;
+        color = "bg-success";
+        label = "Strong";
+    }
+
+    bar.style.width = width + "%";
+    bar.className = "progress-bar " + color;
+
+    text.innerHTML = label + " password";
+});
+
+// Confirm password elements
+const confirmPassword = document.getElementById("confirmPassword");
+const matchText = document.getElementById("match-text");
+const toggleConfirm = document.getElementById("toggleConfirmPassword");
+
+// 👁️ Toggle confirm password
+toggleConfirm.addEventListener("click", function () {
+    const type = confirmPassword.getAttribute("type") === "password" ? "text" : "password";
+    confirmPassword.setAttribute("type", type);
+    this.textContent = type === "password" ? "👁️" : "🙈";
+});
+
+// 🔁 Match checking
+function checkPasswordMatch() {
+    if (!confirmPassword.value) {
+        matchText.innerHTML = "";
+        return;
+    }
+
+    if (password.value === confirmPassword.value) {
+        matchText.innerHTML = "✅ Passwords match";
+        matchText.style.color = "green";
+    } else {
+        matchText.innerHTML = "❌ Passwords do not match";
+        matchText.style.color = "red";
+    }
+}
+
+// Listen to both fields
+password.addEventListener("input", checkPasswordMatch);
+confirmPassword.addEventListener("input", checkPasswordMatch);
+</script>
 
 {% endblock %}

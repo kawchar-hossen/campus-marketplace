@@ -16,25 +16,27 @@ from werkzeug.utils import secure_filename
 
 from app import db
 from app.models.product import Product
+from app.models.seller_profile import SellerProfile
 
 product = Blueprint("product", __name__)
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 
 
-# --------------------------
-# Helpers
-# --------------------------
+# =====================================
+# HELPER
+# =====================================
 def allowed_file(filename):
     return "." in filename and \
            filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-# --------------------------
-# All Products
-# --------------------------
+# =====================================
+# ALL PRODUCTS
+# =====================================
 @product.route("/products")
 def all_products():
+
     search = request.args.get("search", "")
     category = request.args.get("category", "")
     max_price = request.args.get("max_price", "")
@@ -53,7 +55,7 @@ def all_products():
         except:
             pass
 
-    products = query.order_by(Product.created_at.desc()).all()
+    products = query.order_by(Product.id.desc()).all()
 
     return render_template(
         "products.html",
@@ -64,24 +66,44 @@ def all_products():
     )
 
 
-# --------------------------
-# Add Product
-# --------------------------
+# =====================================
+# ADD PRODUCT (SELLER ONLY)
+# =====================================
 @product.route("/product/add", methods=["GET", "POST"])
 @login_required
 def add_product():
+
+    # =====================================
+    # 🚨 SELLER PAYMENT PROFILE CHECK
+    # =====================================
+    seller_profile = SellerProfile.query.filter_by(user_id=current_user.id).first()
+
+    if not seller_profile:
+        flash("Please create seller profile first", "warning")
+        return redirect(url_for("profile.seller_profile"))
+
+    if not seller_profile.bkash_number and not seller_profile.nagad_number:
+        flash("Please add payment info before selling", "warning")
+        return redirect(url_for("profile.seller_profile"))
+
+    # =====================================
+    # HANDLE FORM
+    # =====================================
     if request.method == "POST":
-        title = request.form["title"].strip()
-        description = request.form["description"].strip()
-        price = request.form["price"]
-        category = request.form["category"].strip()
+
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+        price = request.form.get("price")
+        category = request.form.get("category", "").strip()
 
         if not title or not price:
             flash("Title and price required.", "danger")
-            return redirect("/product/add")
+            return redirect(url_for("product.add_product"))
 
+        # =====================================
+        # IMAGE UPLOAD
+        # =====================================
         filename = "default_product.png"
-
         image = request.files.get("image")
 
         if image and image.filename != "":
@@ -99,8 +121,11 @@ def add_product():
 
             else:
                 flash("Invalid image format.", "danger")
-                return redirect("/product/add")
+                return redirect(url_for("product.add_product"))
 
+        # =====================================
+        # CREATE PRODUCT
+        # =====================================
         new_product = Product(
             title=title,
             description=description,
@@ -119,32 +144,35 @@ def add_product():
     return render_template("add_product.html")
 
 
-# --------------------------
-# Product Detail
-# --------------------------
+# =====================================
+# PRODUCT DETAIL
+# =====================================
 @product.route("/product/<int:id>")
 def product_detail(id):
+
     item = Product.query.get_or_404(id)
     return render_template("product_detail.html", product=item)
 
 
-# --------------------------
-# Edit Product
-# --------------------------
+# =====================================
+# EDIT PRODUCT
+# =====================================
 @product.route("/product/edit/<int:id>", methods=["GET", "POST"])
 @login_required
 def edit_product(id):
+
     item = Product.query.get_or_404(id)
 
     if item.seller_id != current_user.id:
         flash("Unauthorized.", "danger")
-        return redirect("/products")
+        return redirect(url_for("product.all_products"))
 
     if request.method == "POST":
-        item.title = request.form["title"].strip()
-        item.description = request.form["description"].strip()
-        item.price = float(request.form["price"])
-        item.category = request.form["category"].strip()
+
+        item.title = request.form.get("title", "").strip()
+        item.description = request.form.get("description", "").strip()
+        item.price = float(request.form.get("price"))
+        item.category = request.form.get("category", "").strip()
 
         db.session.commit()
 
@@ -154,20 +182,22 @@ def edit_product(id):
     return render_template("edit_product.html", product=item)
 
 
-# --------------------------
-# Delete Product
-# --------------------------
+# =====================================
+# DELETE PRODUCT
+# =====================================
 @product.route("/product/delete/<int:id>")
 @login_required
 def delete_product(id):
+
     item = Product.query.get_or_404(id)
 
     if item.seller_id != current_user.id:
         flash("Unauthorized.", "danger")
-        return redirect("/products")
+        return redirect(url_for("product.all_products"))
 
     # delete image file
     if item.image != "default_product.png":
+
         path = os.path.join(
             current_app.config["UPLOAD_FOLDER"],
             item.image
@@ -180,4 +210,4 @@ def delete_product(id):
     db.session.commit()
 
     flash("Product deleted.", "info")
-    return redirect("/products")
+    return redirect(url_for("product.all_products"))

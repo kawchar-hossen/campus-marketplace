@@ -1,0 +1,14 @@
+<h2>bKash Payment</h2>
+
+<p>Send money to:</p>
+<h3>{{ seller.bkash_number }}</h3>
+
+<form method="POST" action="/submit-trx/{{ order.id }}">
+
+    <input type="text" name="trxid" placeholder="Enter TrxID" required>
+
+    <br><br>
+
+    <button type="submit">Submit Payment</button>
+
+</form>

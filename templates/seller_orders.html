@@ -1,25 +1,52 @@
-<h1>Sales Dashboard</h1>
+<h2>Seller Orders Dashboard</h2>
 
-<a href="/products">Back to Products</a>
+<a href="{{ url_for('main.index') }}">Back to Home</a>
 
 <hr>
 
-{% for sale in sales %}
-<div>
-    <img src="/static/images/{{ sale.product.image }}" width="120"><br>
+{% for order in orders %}
 
-    <h3>{{ sale.product.title }}</h3>
+<div style="border:1px solid #ddd; padding:15px; margin-bottom:10px;">
 
-    <p>Buyer: {{ sale.buyer.full_name }}</p>
+    <!-- PRODUCT INFO -->
+    <h3>{{ order.product.title }}</h3>
+    <img src="{{ url_for('static', filename='images/' + order.product.image) }}"
+         width="120">
 
-    <p>Status: {{ sale.status }}</p>
+    <!-- ORDER INFO -->
+    <p><b>Order ID:</b> {{ order.id }}</p>
+    <p><b>Buyer:</b> {{ order.buyer.full_name }}</p>
+    <p><b>Payment Method:</b> {{ order.payment_method }}</p>
+    <p><b>TrxID:</b> {{ order.trxid }}</p>
+    <p><b>Status:</b> {{ order.status }}</p>
 
-    {% if sale.status != "Completed" %}
-        <a href="/order/complete/{{ sale.id }}">
-            Mark Completed
-        </a>
+    <!-- ACTION BUTTONS -->
+    {% if order.status == "waiting_verification" %}
+
+    <form method="POST" action="{{ url_for('seller.verify', order_id=order.id) }}">
+
+        <button type="submit" name="action" value="approve"
+                style="background:green;color:white;padding:5px;">
+            Approve
+        </button>
+
+        <button type="submit" name="action" value="reject"
+                style="background:red;color:white;padding:5px;">
+            Reject
+        </button>
+
+    </form>
+
+    {% elif order.status == "paid" %}
+
+        <p style="color:green;">✔ Payment Approved</p>
+
+    {% elif order.status == "payment_failed" %}
+
+        <p style="color:red;">✖ Payment Rejected</p>
+
     {% endif %}
+
 </div>
 
-<hr>
 {% endfor %}

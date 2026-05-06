@@ -1,15 +1,63 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Bkash Payment</h2>
+<div class="container">
 
-<p>Product: {{ product.title }}</p>
-<p>Price: ৳ {{ product.price }}</p>
+    <h2>💳 Payment Page</h2>
 
-<form action="{{ url_for('payment.send_otp') }}" method="POST">
-    <button class="btn btn-primary">
-        Send OTP
-    </button>
-</form>
+    <div class="card p-3">
+
+        <!-- ORDER INFO -->
+        <p><b>Order ID:</b> {{ order.id }}</p>
+
+        <p><b>Product:</b> {{ order.product.title }}</p>
+
+        <p><b>Price:</b> ৳ {{ order.product.price }}</p>
+
+        <hr>
+
+        <h4>Send Money to Seller</h4>
+
+        <!-- SELLER PAYMENT INFO (SAFE CHECK) -->
+        {% if seller and seller.seller_profile %}
+
+            <p>
+                📱 bKash Number:
+                <b>{{ seller.seller_profile.bkash_number or "Not set" }}</b>
+            </p>
+
+            <p>
+                📱 Nagad Number:
+                <b>{{ seller.seller_profile.nagad_number or "Not set" }}</b>
+            </p>
+
+        {% else %}
+
+            <p class="text-danger">
+                Seller payment information not available
+            </p>
+
+        {% endif %}
+
+        <hr>
+
+        <!-- PAYMENT FORM -->
+        <form method="POST" action="{{ url_for('payment.payment_page', order_id=order.id) }}">
+
+            <label class="form-label">Your Mobile Number</label>
+            <input type="text" name="sender_number" required class="form-control">
+
+            <label class="form-label mt-2">Transaction ID (TrxID)</label>
+            <input type="text" name="trxid" required class="form-control">
+
+            <button type="submit" class="btn btn-primary mt-3">
+                Submit Payment
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
 
 {% endblock %}

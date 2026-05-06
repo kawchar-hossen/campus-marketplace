@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Seller Payment Settings</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h2 class="title">💳 Payment Settings</h2>
+        <p class="subtitle">Add your bKash/Nagad number for receiving payments</p>
+
+        <form method="POST">
+
+            <div class="form-group">
+                <label>bKash Number</label>
+                <input type="text"
+                       name="bkash_number"
+                       value="{{ profile.bkash_number or '' }}"
+                       placeholder="01XXXXXXXXX"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label>Nagad Number</label>
+                <input type="text"
+                       name="nagad_number"
+                       value="{{ profile.nagad_number or '' }}"
+                       placeholder="01XXXXXXXXX">
+            </div>
+
+            <button type="submit" class="btn">
+                Save Payment Info
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

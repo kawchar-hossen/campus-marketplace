@@ -1,0 +1,22 @@
+<h2>User Profile</h2>
+
+<form method="POST">
+
+    <label>Full Name</label>
+    <input type="text" name="full_name" value="{{ current_user.full_name }}">
+
+    <br><br>
+
+    <label>Phone</label>
+    <input type="text" name="phone" value="{{ current_user.phone }}">
+
+    <br><br>
+
+    <label>University</label>
+    <input type="text" name="university" value="{{ current_user.university }}">
+
+    <br><br>
+
+    <button type="submit">Update Profile</button>
+
+</form>

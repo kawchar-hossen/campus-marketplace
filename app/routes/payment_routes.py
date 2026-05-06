@@ -1,83 +1,54 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 
 from app import db
-from app.models.product import Product
 from app.models.order import Order
-from app.services.bkash_service import generate_bkash_otp, verify_bkash_otp
+from app.models.user import User
 
 payment = Blueprint("payment", __name__)
 
 
 # =========================
-# START PAYMENT (CLICK BUY)
+# PAYMENT PAGE + SUBMIT PAYMENT
 # =========================
-@payment.route("/payment/<int:product_id>")
+@payment.route("/payment/<int:order_id>", methods=["GET", "POST"])
 @login_required
-def payment_page(product_id):
+def payment_page(order_id):
 
-    product = Product.query.get_or_404(product_id)
+    order = Order.query.get_or_404(order_id)
+    seller = User.query.get(order.seller_id)
 
-    session["pending_product_id"] = product_id
-
-    return render_template("payment.html", product=product)
-
-
-# =========================
-# SEND OTP (Bkash simulation)
-# =========================
-@payment.route("/payment/send-otp", methods=["POST"])
-@login_required
-def send_otp():
-
-    phone = current_user.phone
-
-    otp = generate_bkash_otp(phone)
-
-    flash(f"OTP sent to your phone: {otp}", "info")  # simulate SMS
-
-    return redirect(url_for("payment.verify_payment"))
-
-
-# =========================
-# VERIFY PAYMENT
-# =========================
-@payment.route("/payment/verify", methods=["GET", "POST"])
-@login_required
-def verify_payment():
-
-    product_id = session.get("pending_product_id")
-
-    if not product_id:
-        flash("Session expired", "danger")
-        return redirect(url_for("main.home"))
-
-    product = Product.query.get_or_404(product_id)
-
+    # =========================
+    # POST = SUBMIT PAYMENT
+    # =========================
     if request.method == "POST":
 
-        otp = request.form.get("otp")
+        trxid = request.form.get("trxid")
+        sender_number = request.form.get("sender_number")
 
-        phone = current_user.phone
+        # validation
+        if not trxid:
+            flash("Transaction ID is required", "danger")
+            return redirect(url_for("payment.payment_page", order_id=order.id))
 
-        if verify_bkash_otp(phone, otp):
+        if not sender_number:
+            flash("Sender number required", "danger")
+            return redirect(url_for("payment.payment_page", order_id=order.id))
 
-            # CREATE ORDER AFTER PAYMENT SUCCESS
-            order = Order(
-                buyer_id=current_user.id,
-                product_id=product.id,
-                status="Paid"
-            )
+        # save payment info in order
+        order.trxid = trxid
+        order.status = "waiting_verification"
 
-            db.session.add(order)
-            db.session.commit()
+        db.session.commit()
 
-            session.pop("pending_product_id", None)
+        flash("Payment submitted successfully!", "success")
+        return redirect(url_for("order.my_orders"))
 
-            flash("Payment successful & order placed!", "success")
-            return redirect(url_for("order.my_orders"))
-
-        else:
-            flash("Invalid OTP", "danger")
-
-    return render_template("verify_payment.html", product=product)
+    # =========================
+    # GET = SHOW PAGE
+    # =========================
+    return render_template(
+        "payment.html",
+        order=order,
+        seller=seller
+    )

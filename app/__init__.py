@@ -9,30 +9,25 @@ from flask_mail import Mail
 
 
 # =====================================
-# Extensions
+# EXTENSIONS
 # =====================================
-
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
-
-# Keep simple here
 socketio = SocketIO()
 mail = Mail()
 
 
 # =====================================
-# Flask-Login Config
+# LOGIN CONFIG
 # =====================================
-
 login_manager.login_view = "auth.login"
 login_manager.login_message_category = "info"
 
 
 # =====================================
-# Create App Factory
+# APP FACTORY
 # =====================================
-
 def create_app():
     app = Flask(
         __name__,
@@ -42,34 +37,25 @@ def create_app():
     )
 
     # =====================================
-    # Load Config
+    # CONFIG
     # =====================================
-
     app.config.from_object("app.utils.config.Config")
 
     app.config["UPLOAD_FOLDER"] = os.path.abspath("static/images")
     app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
     app.config.setdefault("SECRET_KEY", "super-secret-key")
-    app.config.setdefault(
-        "SQLALCHEMY_DATABASE_URI",
-        "sqlite:///campus_marketplace.db"
-    )
-    app.config.setdefault(
-        "SQLALCHEMY_TRACK_MODIFICATIONS",
-        False
-    )
+    app.config.setdefault("SQLALCHEMY_DATABASE_URI", "sqlite:///campus_marketplace.db")
+    app.config.setdefault("SQLALCHEMY_TRACK_MODIFICATIONS", False)
 
     # =====================================
-    # Initialize Extensions
+    # INIT EXTENSIONS
     # =====================================
-
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
     mail.init_app(app)
 
-    # IMPORTANT
     socketio.init_app(
         app,
         cors_allowed_origins="*",
@@ -77,49 +63,53 @@ def create_app():
     )
 
     # =====================================
-    # Import Models
+    # IMPORT MODELS (IMPORTANT)
     # =====================================
+    from app.models.user import User
+    from app.models.product import Product
+    from app.models.order import Order
+    from app.models.seller_profile import SellerProfile
 
-    from app.models import User, Product, Wishlist, Order, Message
+    # Optional models (only if exist)
+    # from app.models.wishlist import Wishlist
+    # from app.models.message import Message
 
     # =====================================
-    # User Loader
+    # USER LOADER (KEEP ONLY HERE)
     # =====================================
-
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
 
     # =====================================
-    # Import Blueprints
+    # BLUEPRINTS
     # =====================================
-
     from app.routes.main_routes import main
     from app.routes.auth_routes import auth
     from app.routes.product_routes import product
     from app.routes.wishlist_routes import wishlist
     from app.routes.chat_routes import chat
     from app.routes.order_routes import order
-    from app.routes.admin_routes import admin
     from app.routes.payment_routes import payment
-    # =====================================
-    # Register Blueprints
-    # =====================================
+    from app.routes.seller_routes import seller
+    from app.routes.admin_routes import admin
+    from app.routes.profile_routes import profile
 
+    # REGISTER BLUEPRINTS
     app.register_blueprint(main)
     app.register_blueprint(auth)
     app.register_blueprint(product)
     app.register_blueprint(wishlist)
     app.register_blueprint(chat)
     app.register_blueprint(order)
-    app.register_blueprint(admin)
     app.register_blueprint(payment)
+    app.register_blueprint(seller)
+    app.register_blueprint(admin)
+    app.register_blueprint(profile)
 
     # =====================================
-    # Import Socket Events
-    # VERY IMPORTANT
+    # SOCKET EVENTS
     # =====================================
-
     from app.sockets import chat_socket
 
     return app
